@@ -92,6 +92,8 @@ class MyGallery extends React.Component {
 * `infinite`: Boolean, default `true`
   * infinite sliding
 * `lazyLoad`: Boolean, default `false`
+* `transition`: String, default `slide`
+  * another value: `fade`
 * `showNav`: Boolean, default `true`
 * `showThumbnails`: Boolean, default `true`
 * `thumbnailPosition`: String, default `bottom`
