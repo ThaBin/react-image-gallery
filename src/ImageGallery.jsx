@@ -60,6 +60,7 @@ export default class ImageGallery extends React.Component {
       sizes: string,
     })).isRequired,
     showNav: bool,
+    transition: string,
     autoPlay: bool,
     lazyLoad: bool,
     infinite: bool,
@@ -114,6 +115,7 @@ export default class ImageGallery extends React.Component {
     onErrorImageURL: '',
     additionalClass: '',
     showNav: true,
+    transition: 'slide',
     autoPlay: false,
     lazyLoad: false,
     infinite: true,
@@ -415,10 +417,10 @@ export default class ImageGallery extends React.Component {
   getAlignmentClassName(index) {
     // Necessary for lazing loading
     const { currentIndex } = this.state;
-    const { infinite, items } = this.props;
+    const { infinite, items, transition } = this.props;
     let alignment = '';
     const leftClassName = 'left';
-    const centerClassName = 'center';
+    const centerClassName = transition === 'fade' ? 'center show' : 'center';
     const rightClassName = 'right';
 
     switch (index) {
@@ -507,13 +509,22 @@ export default class ImageGallery extends React.Component {
   }
 
   getSlideStyle(index) {
-    const { currentIndex, currentSlideOffset, slideStyle } = this.state;
+    const { currentIndex, currentSlideOffset, slideStyle = {} } = this.state;
     const {
       infinite,
       items,
       useTranslate3D,
       isRTL,
+      transition,
+      slideDuration,
     } = this.props;
+    if (transition === 'fade') {
+      const transitionOfSlideStyle = slideStyle.transition || '';
+      const combinedTransitionSlideStyle = {
+        transition: `${transitionOfSlideStyle}, opacity ${slideDuration}ms`
+      };
+      return Object.assign({}, slideStyle, combinedTransitionSlideStyle);
+    }
     const baseTranslateX = -100 * currentIndex;
     const totalSlides = items.length - 1;
 
@@ -601,6 +612,7 @@ export default class ImageGallery extends React.Component {
       renderThumbInner,
       showThumbnails,
       showBullets,
+      transition,
     } = this.props;
 
     const slides = [];
@@ -621,12 +633,15 @@ export default class ImageGallery extends React.Component {
       }
 
       const slideStyle = this.getSlideStyle(index);
+      const className = transition === 'fade'
+        ? `image-gallery-slide fade ${alignment} ${originalClass}`
+        : `image-gallery-slide ${alignment} ${originalClass}`;
 
       const slide = (
         <div
           key={`slide-${item.original}-${index}`}
           tabIndex="-1"
-          className={`image-gallery-slide ${alignment} ${originalClass}`}
+          className={className}
           style={slideStyle}
           onClick={onClick}
           onKeyUp={this.handleSlideKeyUp}

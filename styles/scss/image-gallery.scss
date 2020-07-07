@@ -202,8 +202,16 @@ $ig-transparent: rgba(0, 0, 0, 0) !default;
   top: 0;
   width: 100%;
 
+  &.fade {
+    opacity: 0;
+  }
+
   &.center {
     position: relative;
+    
+    &.show {
+      opacity: 1 !important;
+    }
   }
 
   .image-gallery-image {
